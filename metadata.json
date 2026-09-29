@@ -1,0 +1,6 @@
+{
+  "name": "TimberCraft: Forest Settlement",
+  "description": "Chop trees, gather diverse wood types, upgrade your house from a simple shelter to a grand estate, forge new axes, and hire lumberjacks to expand your frontier base.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
