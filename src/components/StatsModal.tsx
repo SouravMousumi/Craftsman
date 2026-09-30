@@ -66,6 +66,12 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose }) => {
       desc: 'Discover 3 or more rare Amber stones',
       unlocked: stats.totalAmberFound >= 3 || resources.amber >= 3,
     },
+    {
+      id: 'beast_slayer',
+      title: 'Wild Frontier Hunter',
+      desc: 'Defeat at least 3 wild beasts in the forest',
+      unlocked: (stats.monstersKilled || 0) >= 3,
+    },
   ];
 
   return (
@@ -94,7 +100,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6 font-mono text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 font-mono text-xs">
           <div className="bg-stone-950/70 p-3 rounded-xl border border-stone-800">
             <span className="text-stone-400 block text-[11px]">Trees Felled</span>
             <span className="text-lg font-bold text-emerald-400 tabular-nums">
@@ -117,6 +123,13 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose }) => {
           </div>
 
           <div className="bg-stone-950/70 p-3 rounded-xl border border-stone-800">
+            <span className="text-stone-400 block text-[11px]">Beasts Slain</span>
+            <span className="text-lg font-bold text-rose-400 tabular-nums">
+              {(stats.monstersKilled || 0).toLocaleString()}
+            </span>
+          </div>
+
+          <div className="bg-stone-950/70 p-3 rounded-xl border border-stone-800">
             <span className="text-stone-400 block text-[11px]">Amber Found</span>
             <span className="text-lg font-bold text-amber-500 tabular-nums">
               {stats.totalAmberFound.toLocaleString()}
@@ -127,6 +140,13 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose }) => {
             <span className="text-stone-400 block text-[11px]">Player Chops</span>
             <span className="text-lg font-bold text-stone-200 tabular-nums">
               {stats.manualChops.toLocaleString()}
+            </span>
+          </div>
+
+          <div className="bg-stone-950/70 p-3 rounded-xl border border-stone-800">
+            <span className="text-stone-400 block text-[11px]">Settler Defeats</span>
+            <span className="text-lg font-bold text-red-400 tabular-nums">
+              {(stats.playerDeaths || 0).toLocaleString()}
             </span>
           </div>
 

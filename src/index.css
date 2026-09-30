@@ -40,3 +40,97 @@
 .animate-chop {
   animation: chopShake 0.22s ease-in-out;
 }
+
+/* Enhanced Realistic Tree Impact Shake */
+@keyframes treeImpactShake {
+  0% { transform: scale(1) rotate(0deg); }
+  18% { transform: scale(0.96, 1.04) rotate(-5deg); }
+  40% { transform: scale(1.03, 0.97) rotate(4deg); }
+  65% { transform: scale(0.99, 1.01) rotate(-2deg); }
+  85% { transform: scale(1.01, 0.99) rotate(1deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.animate-tree-impact {
+  animation: treeImpactShake 0.32s cubic-bezier(0.25, 1, 0.5, 1);
+  transform-origin: bottom center !important;
+}
+
+/* Tree Topple / Timber Falling Physics */
+@keyframes treeToppleFalling {
+  0% {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  20% {
+    transform: rotate(-6deg) scale(1);
+  }
+  65% {
+    transform: rotate(62deg) translateY(10px) scale(0.96);
+    opacity: 0.85;
+  }
+  100% {
+    transform: rotate(85deg) translateY(24px) scale(0.9);
+    opacity: 0;
+  }
+}
+
+.animate-tree-topple {
+  animation: treeToppleFalling 0.65s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+  transform-origin: bottom center !important;
+}
+
+/* Wood Chip Particle Bursts */
+@keyframes chipBurst1 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: translate(-28px, -26px) scale(0.4) rotate(-220deg); opacity: 0; }
+}
+@keyframes chipBurst2 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: translate(28px, -30px) scale(0.5) rotate(260deg); opacity: 0; }
+}
+@keyframes chipBurst3 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: translate(-14px, -42px) scale(0.4) rotate(140deg); opacity: 0; }
+}
+@keyframes chipBurst4 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: translate(20px, -18px) scale(0.5) rotate(-160deg); opacity: 0; }
+}
+
+.animate-chip-1 { animation: chipBurst1 0.38s ease-out forwards; }
+.animate-chip-2 { animation: chipBurst2 0.38s ease-out forwards; }
+.animate-chip-3 { animation: chipBurst3 0.38s ease-out forwards; }
+.animate-chip-4 { animation: chipBurst4 0.38s ease-out forwards; }
+
+/* Player Axe Swinging Motion Arc */
+@keyframes axeSwingSlash {
+  0% {
+    transform: rotate(38deg) scale(0.95);
+  }
+  35% {
+    transform: rotate(-76deg) scale(1.18);
+  }
+  65% {
+    transform: rotate(-58deg) scale(1.05);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.animate-axe-swing {
+  animation: axeSwingSlash 0.28s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+  transform-origin: 26px 36px;
+}
+
+/* Impact Flash */
+@keyframes slashImpactFlash {
+  0% { transform: scale(0.5) rotate(-20deg); opacity: 1; }
+  50% { transform: scale(1.3) rotate(15deg); opacity: 0.8; }
+  100% { transform: scale(1.6) rotate(30deg); opacity: 0; }
+}
+
+.animate-slash-flash {
+  animation: slashImpactFlash 0.26s ease-out forwards;
+}

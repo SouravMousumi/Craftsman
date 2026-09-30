@@ -1,7 +1,8 @@
 import React from 'react';
-import { Hammer, Check, ArrowUpRight, ShieldCheck, Warehouse, Flame, Coins } from 'lucide-react';
+import { Hammer, Check, ArrowUpRight, ShieldCheck, Warehouse, Flame, Coins, X, ArrowLeft } from 'lucide-react';
 import { useGame } from '../context/GameContext';
 import { HOUSE_STAGES, WOOD_DEFINITIONS, WoodType, SettlementBuilding } from '../types/game';
+import { HouseBuildingVisual } from './HouseBuildingVisual';
 
 // Custom SVG renderer for the player's House based on current level
 const HouseGraphic: React.FC<{ level: number }> = ({ level }) => {
@@ -18,176 +19,10 @@ const HouseGraphic: React.FC<{ level: number }> = ({ level }) => {
       {/* Cobblestone/Grass ground base */}
       <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-stone-950 via-stone-900 to-emerald-950/40 border-t border-stone-800/60" />
 
-      {/* STAGE 0: Wilderness Camp */}
-      {level === 0 && (
-        <svg viewBox="0 0 300 200" className="w-72 h-48 drop-shadow-xl z-10">
-          {/* Ground patch */}
-          <ellipse cx="150" cy="165" rx="100" ry="25" fill="#292524" />
-          {/* Tent */}
-          <polygon points="60,160 120,80 180,160" fill="#78350f" />
-          <polygon points="120,80 180,160 160,160 120,95" fill="#92400e" />
-          {/* Wooden tent pegs */}
-          <line x1="50" y1="165" x2="65" y2="155" stroke="#451a03" strokeWidth="3" />
-          <line x1="190" y1="165" x2="175" y2="155" stroke="#451a03" strokeWidth="3" />
-          {/* Campfire stone ring */}
-          <circle cx="210" cy="160" r="18" fill="#57534e" />
-          <circle cx="210" cy="160" r="14" fill="#292524" />
-          {/* Fire logs */}
-          <line x1="202" y1="156" x2="218" y2="164" stroke="#451a03" strokeWidth="4" />
-          <line x1="218" y1="156" x2="202" y2="164" stroke="#451a03" strokeWidth="4" />
-          {/* Animated campfire flame */}
-          <path d="M 206 160 Q 210 135 214 160 Z" fill="#f97316" className="animate-pulse" />
-          <path d="M 208 160 Q 210 142 212 160 Z" fill="#facc15" />
-          {/* Log seat bench */}
-          <rect x="235" y="152" width="35" height="12" rx="4" fill="#78350f" />
-        </svg>
-      )}
-
-      {/* STAGE 1: Rustic Log Cabin */}
-      {level === 1 && (
-        <svg viewBox="0 0 300 200" className="w-72 h-48 drop-shadow-xl z-10">
-          {/* Chimney */}
-          <rect x="80" y="55" width="22" height="60" fill="#57534e" />
-          {/* Chimney smoke */}
-          <circle cx="91" cy="45" r="5" fill="#a8a29e" opacity="0.6" className="animate-bounce" />
-          <circle cx="95" cy="30" r="7" fill="#a8a29e" opacity="0.4" className="animate-pulse" />
-          {/* Main Cabin Walls with horizontal log details */}
-          <rect x="70" y="90" width="160" height="75" rx="3" fill="#78350f" stroke="#451a03" strokeWidth="2" />
-          <line x1="70" y1="105" x2="230" y2="105" stroke="#451a03" strokeWidth="2" />
-          <line x1="70" y1="120" x2="230" y2="120" stroke="#451a03" strokeWidth="2" />
-          <line x1="70" y1="135" x2="230" y2="135" stroke="#451a03" strokeWidth="2" />
-          <line x1="70" y1="150" x2="230" y2="150" stroke="#451a03" strokeWidth="2" />
-          {/* Shingled Roof */}
-          <polygon points="50,92 150,35 250,92" fill="#92400e" stroke="#451a03" strokeWidth="3" />
-          {/* Wooden Door */}
-          <rect x="135" y="115" width="30" height="50" rx="2" fill="#451a03" />
-          <circle cx="160" cy="140" r="2" fill="#facc15" />
-          {/* Warm glowing window */}
-          <rect x="85" y="110" width="28" height="28" rx="2" fill="#fef08a" stroke="#451a03" strokeWidth="2" />
-          <line x1="99" y1="110" x2="99" y2="138" stroke="#451a03" strokeWidth="1.5" />
-          <line x1="85" y1="124" x2="113" y2="124" stroke="#451a03" strokeWidth="1.5" />
-          {/* Porch Lantern */}
-          <rect x="175" y="120" width="8" height="12" fill="#fef08a" stroke="#292524" strokeWidth="1" />
-        </svg>
-      )}
-
-      {/* STAGE 2: Two-Story Oak Homestead */}
-      {level === 2 && (
-        <svg viewBox="0 0 300 200" className="w-80 h-52 drop-shadow-xl z-10">
-          {/* Stone Foundation */}
-          <rect x="60" y="150" width="180" height="20" rx="2" fill="#78716c" stroke="#44403c" strokeWidth="2" />
-          {/* Lower Story */}
-          <rect x="65" y="100" width="170" height="52" fill="#854d0e" stroke="#451a03" strokeWidth="2" />
-          {/* Upper Story */}
-          <rect x="75" y="55" width="150" height="48" fill="#a16207" stroke="#451a03" strokeWidth="2" />
-          {/* High Gabled Roof */}
-          <polygon points="55,58 150,15 245,58" fill="#713f12" stroke="#451a03" strokeWidth="3" />
-          {/* Dormer Window on roof */}
-          <polygon points="135,38 150,22 165,38" fill="#854d0e" />
-          <rect x="140" y="38" width="20" height="18" fill="#fef08a" stroke="#451a03" strokeWidth="1.5" />
-          {/* Ground Floor Windows */}
-          <rect x="80" y="112" width="26" height="26" fill="#fef08a" stroke="#451a03" strokeWidth="2" />
-          <rect x="194" y="112" width="26" height="26" fill="#fef08a" stroke="#451a03" strokeWidth="2" />
-          {/* Heavy Oak Double Door */}
-          <rect x="135" y="110" width="30" height="42" fill="#451a03" />
-          <line x1="150" y1="110" x2="150" y2="152" stroke="#292524" strokeWidth="1.5" />
-          {/* Balcony Railing */}
-          <rect x="120" y="86" width="60" height="14" fill="none" stroke="#ca8a04" strokeWidth="2" />
-          <line x1="130" y1="86" x2="130" y2="100" stroke="#ca8a04" strokeWidth="1.5" />
-          <line x1="145" y1="86" x2="145" y2="100" stroke="#ca8a04" strokeWidth="1.5" />
-          <line x1="160" y1="86" x2="160" y2="100" stroke="#ca8a04" strokeWidth="1.5" />
-          <line x1="170" y1="86" x2="170" y2="100" stroke="#ca8a04" strokeWidth="1.5" />
-          {/* Smoke from stone chimney */}
-          <rect x="200" y="25" width="20" height="40" fill="#78716c" />
-          <circle cx="210" cy="15" r="6" fill="#d6d3d1" opacity="0.6" className="animate-pulse" />
-        </svg>
-      )}
-
-      {/* STAGE 3: Craftsman Woodland Manor */}
-      {level === 3 && (
-        <svg viewBox="0 0 320 200" className="w-84 h-56 drop-shadow-2xl z-10">
-          {/* Stone Terraced Foundation */}
-          <rect x="40" y="148" width="240" height="24" rx="2" fill="#57534e" stroke="#292524" strokeWidth="2" />
-          {/* Main Hall */}
-          <rect x="50" y="80" width="220" height="70" fill="#92400e" stroke="#451a03" strokeWidth="2" />
-          {/* White Birch Trim Corner Pillars */}
-          <rect x="50" y="80" width="12" height="70" fill="#f8fafc" />
-          <rect x="258" y="80" width="12" height="70" fill="#f8fafc" />
-          {/* Multi-tier Steep Sloped Roofs */}
-          <polygon points="35,84 160,25 285,84" fill="#b45309" stroke="#451a03" strokeWidth="3" />
-          {/* Secondary Gable Tower */}
-          <polygon points="50,60 90,20 130,60" fill="#92400e" stroke="#451a03" strokeWidth="2" />
-          {/* Wraparound Porch Deck */}
-          <line x1="40" y1="130" x2="280" y2="130" stroke="#ca8a04" strokeWidth="3" />
-          {/* Elegant Stained-Glass & Bay Windows */}
-          <rect x="70" y="98" width="35" height="32" rx="2" fill="#fef08a" stroke="#451a03" strokeWidth="2" />
-          <rect x="215" y="98" width="35" height="32" rx="2" fill="#fef08a" stroke="#451a03" strokeWidth="2" />
-          {/* Grand Front Entryway */}
-          <polygon points="140,88 160,70 180,88" fill="#f8fafc" />
-          <rect x="145" y="96" width="30" height="54" fill="#451a03" />
-          {/* Carriage Lanterns */}
-          <circle cx="138" cy="115" r="4" fill="#fde047" className="animate-pulse" />
-          <circle cx="182" cy="115" r="4" fill="#fde047" className="animate-pulse" />
-        </svg>
-      )}
-
-      {/* STAGE 4: Redwood Timber Chateau */}
-      {level === 4 && (
-        <svg viewBox="0 0 340 210" className="w-92 h-60 drop-shadow-2xl z-10">
-          {/* Cut Stone Bastion Foundation */}
-          <rect x="30" y="145" width="280" height="30" fill="#44403c" stroke="#1c1917" strokeWidth="2" />
-          {/* Left Watchtower */}
-          <rect x="35" y="45" width="55" height="105" fill="#7f1d1d" stroke="#450a0a" strokeWidth="2" />
-          <polygon points="25,48 62,10 100,48" fill="#450a0a" stroke="#1c1917" strokeWidth="2" />
-          <line x1="62" y1="10" x2="62" y2="0" stroke="#ca8a04" strokeWidth="2" />
-          <polygon points="62,0 76,4 62,8" fill="#ef4444" />
-          {/* Right Watchtower */}
-          <rect x="250" y="45" width="55" height="105" fill="#7f1d1d" stroke="#450a0a" strokeWidth="2" />
-          <polygon points="240,48 277,10 315,48" fill="#450a0a" stroke="#1c1917" strokeWidth="2" />
-          {/* Central Manor Hall */}
-          <rect x="85" y="65" width="170" height="85" fill="#991b1b" stroke="#450a0a" strokeWidth="2" />
-          <polygon points="80,68 170,18 260,68" fill="#7f1d1d" stroke="#450a0a" strokeWidth="3" />
-          {/* Massive Arched Redwood Gateway */}
-          <path d="M 150 148 L 150 108 Q 170 92 190 108 L 190 148 Z" fill="#1c1917" />
-          <path d="M 152 148 L 152 110 Q 170 95 188 110 L 188 148 Z" fill="#450a0a" stroke="#ca8a04" strokeWidth="2" />
-          {/* Glowing Windows */}
-          <rect x="105" y="85" width="28" height="38" rx="3" fill="#fef08a" stroke="#450a0a" strokeWidth="2" />
-          <rect x="205" y="85" width="28" height="38" rx="3" fill="#fef08a" stroke="#450a0a" strokeWidth="2" />
-          <rect x="50" y="70" width="18" height="24" rx="2" fill="#fef08a" />
-          <rect x="270" y="70" width="18" height="24" rx="2" fill="#fef08a" />
-        </svg>
-      )}
-
-      {/* STAGE 5: Grand Forest Citadel */}
-      {level >= 5 && (
-        <svg viewBox="0 0 360 220" className="w-96 h-64 drop-shadow-2xl z-10">
-          <defs>
-            <linearGradient id="citadelGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#c084fc" />
-              <stop offset="100%" stopColor="#581c87" />
-            </linearGradient>
-          </defs>
-          {/* Monumental Granite Base */}
-          <rect x="20" y="145" width="320" height="35" rx="3" fill="#292524" stroke="#1c1917" strokeWidth="3" />
-          {/* Great Citadel Ironwood Fortress Wings */}
-          <rect x="40" y="60" width="280" height="90" fill="#3b0764" stroke="#1e1b4b" strokeWidth="2" />
-          {/* Center Spire Tower */}
-          <rect x="135" y="30" width="90" height="120" fill="#4c1d95" stroke="#1e1b4b" strokeWidth="2" />
-          <polygon points="120,35 180, -5 240,35" fill="url(#citadelGlow)" stroke="#c084fc" strokeWidth="2" />
-          {/* Left Wing Tower */}
-          <polygon points="30,65 65,15 100,65" fill="#581c87" stroke="#c084fc" strokeWidth="1.5" />
-          {/* Right Wing Tower */}
-          <polygon points="260,65 295,15 330,65" fill="#581c87" stroke="#c084fc" strokeWidth="1.5" />
-          {/* Glowing Enchanted Stained Crystal Arches */}
-          <path d="M 160 148 L 160 90 Q 180 75 200 90 L 200 148 Z" fill="#e9d5ff" stroke="#a855f7" strokeWidth="3" />
-          {/* Crest Banners */}
-          <polygon points="150,55 165,55 165,85 157,75 150,85" fill="#f59e0b" />
-          <polygon points="195,55 210,55 210,85 202,75 195,85" fill="#f59e0b" />
-          {/* Floating Mystic Amber Orbs */}
-          <circle cx="180" cy="5" r="5" fill="#fbbf24" className="animate-ping" />
-          <circle cx="180" cy="5" r="4" fill="#fef08a" />
-        </svg>
-      )}
+      {/* Progressive Architectural Building Graphic */}
+      <div className="relative z-10 w-80 h-56 flex items-center justify-center">
+        <HouseBuildingVisual level={level} className="w-full h-full" />
+      </div>
     </div>
   );
 };
@@ -214,9 +49,40 @@ export const HouseSettlementView: React.FC<HouseSettlementViewProps> = ({
   const nextStage = HOUSE_STAGES[houseLevel + 1];
 
   return (
-    <div className="flex flex-col gap-8 pb-12">
+    <div className="flex flex-col gap-6 pb-12">
+      {/* Top Navigation Bar with Back & Close (X) button */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => onNavigate && onNavigate('map')}
+          className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-stone-900/90 hover:bg-stone-800 text-stone-300 hover:text-stone-100 border border-stone-800 transition-all cursor-pointer text-xs font-semibold shadow-sm active:scale-95 group"
+          title="Return to World Map"
+        >
+          <ArrowLeft className="w-4 h-4 text-amber-400 group-hover:-translate-x-0.5 transition-transform" />
+          <span>Back to Forest Map</span>
+        </button>
+
+        <button
+          onClick={() => onNavigate && onNavigate('map')}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-900/90 hover:bg-stone-800 text-stone-400 hover:text-rose-400 border border-stone-800 transition-all cursor-pointer shadow-sm active:scale-95 text-xs font-semibold"
+          aria-label="Close and return to map"
+          title="Close and return to map (X)"
+        >
+          <span>Close</span>
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+
       {/* Current House Banner */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-stone-900/90 p-5 rounded-2xl border border-stone-800 shadow-xl">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-stone-900/90 p-5 rounded-2xl border border-stone-800 shadow-xl relative">
+        <button
+          onClick={() => onNavigate && onNavigate('map')}
+          className="absolute top-4 right-4 md:hidden w-7 h-7 rounded-lg bg-stone-950/80 hover:bg-stone-800 text-stone-400 hover:text-stone-200 border border-stone-700/60 flex items-center justify-center cursor-pointer transition-colors"
+          title="Close"
+          aria-label="Close"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs uppercase tracking-wider font-semibold text-amber-500 font-mono">

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import {
   WoodType,
@@ -13,6 +13,10 @@ import {
   TreeInstance,
   FloatingParticle,
   GameStats,
+  AnimalMonsterType,
+  ANIMAL_DEFINITIONS,
+  ForestObstacle,
+  DEFAULT_OBSTACLES,
 } from '../types/game';
 import { sound } from '../utils/audio';
 
@@ -41,6 +45,16 @@ interface GameContextType {
   storageCap: number;
   offlineEarnings: { wood: Partial<Record<WoodType, number>>; planks: number; seconds: number } | null;
   clearOfflineEarnings: () => void;
+  // Player Health & Monster Combat
+  playerHp: number;
+  maxPlayerHp: number;
+  isPlayerHit: boolean;
+  deathNotification: { message: string; lostGold: number } | null;
+  clearDeathNotification: () => void;
+  damagePlayer: (amount: number, monsterName?: string) => boolean;
+  healPlayer: (amount: number) => void;
+  defeatMonster: (monsterType: AnimalMonsterType, monsterX: number, monsterY: number) => number;
+  obstacles: ForestObstacle[];
   // Core Actions
   chopTree: (treeId: string, event?: React.MouseEvent | { clientX: number; clientY: number }, isWorker?: boolean, workerChopPower?: number) => void;
   craftPlanks: (woodType: WoodType, planksCount: number) => boolean;
@@ -80,11 +94,11 @@ function generateAllWorldTrees(): TreeInstance[] {
   const trees: TreeInstance[] = [];
 
   const groveConfigs: { type: WoodType; center: { x: number; y: number }; spread: number; count: number }[] = [
-    { type: 'pine', center: { x: 550, y: 500 }, spread: 260, count: 9 },
-    { type: 'oak', center: { x: 1320, y: 440 }, spread: 260, count: 9 },
-    { type: 'birch', center: { x: 2100, y: 530 }, spread: 260, count: 9 },
-    { type: 'ironwood', center: { x: 600, y: 1350 }, spread: 260, count: 8 },
-    { type: 'redwood', center: { x: 2050, y: 1360 }, spread: 280, count: 8 },
+    { type: 'pine', center: { x: 1100, y: 1000 }, spread: 550, count: 18 },
+    { type: 'oak', center: { x: 2600, y: 880 }, spread: 550, count: 18 },
+    { type: 'birch', center: { x: 4200, y: 1050 }, spread: 550, count: 18 },
+    { type: 'ironwood', center: { x: 1200, y: 2700 }, spread: 550, count: 16 },
+    { type: 'redwood', center: { x: 4100, y: 2700 }, spread: 580, count: 16 },
   ];
 
   let idCounter = 1;
@@ -216,6 +230,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [selectedGrove, setSelectedGrove] = useState<WoodType>('pine');
   const [trees, setTrees] = useState<TreeInstance[]>(() => generateAllWorldTrees());
   const [particles, setParticles] = useState<FloatingParticle[]>([]);
+  // Player Health & Combat State
+  const [playerHp, setPlayerHp] = useState<number>(100);
+  const maxPlayerHp = 100;
+  const playerHpRef = useRef<number>(100);
+  const [isPlayerHit, setIsPlayerHit] = useState<boolean>(false);
+  const [deathNotification, setDeathNotification] = useState<{ message: string; lostGold: number } | null>(null);
+  const [obstacles] = useState<ForestObstacle[]>(() => DEFAULT_OBSTACLES);
   const [offlineEarnings, setOfflineEarnings] = useState<{
     wood: Partial<Record<WoodType, number>>;
     planks: number;
@@ -360,7 +381,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
               return {
                 ...t,
                 state: 'standing' as const,
-                currentHp: t.maxHp,
+                currentHp: def.maxHp,
+                maxHp: def.maxHp,
                 regrowProgress: 100,
               };
             }
@@ -517,7 +539,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
               };
               return copy;
             });
-          }, 350);
+          }, 650);
 
           return nextTrees;
         }
@@ -538,7 +560,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
             copy[idx] = { ...copy[idx], shake: false };
             return copy;
           });
-        }, 180);
+        }, 300);
 
         return nextTrees;
       });
@@ -686,6 +708,103 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     },
     [unlockedWoodTypes, resources.coins]
   );
+
+  // Clear death popup / banner
+  const clearDeathNotification = useCallback(() => {
+    setDeathNotification(null);
+  }, []);
+
+  // Player combat damage & death
+  const damagePlayer = useCallback(
+    (amount: number, monsterName: string = 'Forest Beast') => {
+      sound.playPlayerHurt();
+      setIsPlayerHit(true);
+      setTimeout(() => setIsPlayerHit(false), 240);
+
+      const currentHp = playerHpRef.current;
+      const willDie = currentHp - amount <= 0;
+
+      if (willDie) {
+        playerHpRef.current = maxPlayerHp;
+        setPlayerHp(maxPlayerHp);
+        sound.playPlayerDeath();
+
+        // User requirement: "You die you loose 10 gold"
+        setResources((prevRes) => ({
+          ...prevRes,
+          coins: Math.max(0, prevRes.coins - 10),
+        }));
+
+        setStats((prevStats) => ({
+          ...prevStats,
+          playerDeaths: (prevStats.playerDeaths || 0) + 1,
+        }));
+
+        setDeathNotification({
+          message: `You were defeated by a ${monsterName}! You lost 10 Gold and woke up safely at camp.`,
+          lostGold: 10,
+        });
+
+        return true;
+      } else {
+        const nextHp = currentHp - amount;
+        playerHpRef.current = nextHp;
+        setPlayerHp(nextHp);
+        return false;
+      }
+    },
+    [maxPlayerHp]
+  );
+
+  // Heal player
+  const healPlayer = useCallback(
+    (amount: number) => {
+      const nextHp = Math.min(maxPlayerHp, playerHpRef.current + amount);
+      playerHpRef.current = nextHp;
+      setPlayerHp(nextHp);
+    },
+    [maxPlayerHp]
+  );
+
+  // Defeat wild animal / monster
+  const defeatMonster = useCallback(
+    (monsterType: AnimalMonsterType, monsterX: number, monsterY: number) => {
+      const def = ANIMAL_DEFINITIONS[monsterType];
+      const reward = def ? def.goldReward : 10;
+
+      sound.playMonsterDefeated();
+
+      // User requirement: "You kill them you earn 10 gold . The gold will varry based on the strength of the monster"
+      setResources((prev) => ({
+        ...prev,
+        coins: prev.coins + reward,
+      }));
+
+      // Floating gold particle
+      addParticle(monsterX, monsterY - 24, `+${reward} Gold! 🪙 Defeated ${def.name}`, '#fbbf24', true);
+
+      setStats((prev) => ({
+        ...prev,
+        totalCoinsEarned: prev.totalCoinsEarned + reward,
+        monstersKilled: (prev.monstersKilled || 0) + 1,
+      }));
+
+      return reward;
+    },
+    [addParticle]
+  );
+
+  // Natural passive regeneration: heal 5 HP every 2.5s when injured
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (playerHpRef.current < maxPlayerHp) {
+        const nextHp = Math.min(maxPlayerHp, playerHpRef.current + 5);
+        playerHpRef.current = nextHp;
+        setPlayerHp(nextHp);
+      }
+    }, 2500);
+    return () => clearInterval(timer);
+  }, [maxPlayerHp]);
 
   // House Upgrade check
   const nextHouseStage = HOUSE_STAGES[houseLevel + 1];
@@ -1006,6 +1125,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         storageCap,
         offlineEarnings,
         clearOfflineEarnings,
+        playerHp,
+        maxPlayerHp,
+        isPlayerHit,
+        deathNotification,
+        clearDeathNotification,
+        damagePlayer,
+        healPlayer,
+        defeatMonster,
+        obstacles,
         chopTree,
         craftPlanks,
         craftAllPlanks,
